@@ -11,18 +11,28 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@stripe/stripe-js": "^5.4.0",
+    "axios": "^1.7.9",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^2.5.1",
     "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "framer-motion": "^11.15.0",
     "ioredis": "^5.4.1",
     "jsonwebtoken": "^9.0.2",
+    "lucide-react": "^0.469.0",
     "mailtrap": "^3.4.0",
     "mongoose": "^8.8.4",
     "nodemon": "^3.1.7",
+    "react-confetti": "^6.2.2",
+    "react-hot-toast": "^2.5.1",
+    "react-router-dom": "^6.28.1",
+    "recharts": "^2.15.0",
     "stripe": "^17.5.0",
-    "xpress": "^2.4.6"
+    "xpress": "^2.4.6",
+    "zustand": "^5.0.2"
   }
 }

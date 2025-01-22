@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+import cors from "cors"
 
 import { connectDB } from "./lib/connectDB.js";
 import authRoutes from "./routes/auth.routes.js";
@@ -15,6 +16,7 @@ import analyticsRoutes from "./routes/analytics.routes.js";
 dotenv.config();
 
 const app = express();
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 
 // Middleware
 app.use(express.json()); // Parse incoming JSON requests
@@ -29,7 +31,7 @@ app.get("/", (req, res) => {
 // Auth routes
 app.use("/api/auth", authRoutes);
 app.use("/api/products",productRoutes)
-app.use("/api/cart",cartRoutes)
+app.use("/api/cart",cartRoutes) 
 app.use("/api/coupons",couponsRoutes)
 app.use("/api/payments", paymentRoutes);
 app.use("/api/analytics", analyticsRoutes);

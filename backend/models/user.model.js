@@ -14,9 +14,8 @@ const userSchema = new mongoose.Schema(
 		name: {
 			type: String,
 			required: true,
-        
 		},
-        cartItems: [
+		cartItems: [
 			{
 				quantity: {
 					type: Number,
@@ -28,21 +27,18 @@ const userSchema = new mongoose.Schema(
 				},
 			},
 		],
-        
-        role:{
-            type: String,
-			enum: ["customer", "seller"]
-
-        },
+		role: {
+			type: String,
+			enum: ["customer", "seller"],
+		},
 		lastLogin: {
 			type: Date,
 			default: Date.now,
 		},
 		isVerified: {
 			type: Boolean,
-			default: false,},
-		
-		
+			default: false,
+		},
 		resetPasswordToken: String,
 		resetPasswordExpiresAt: Date,
 		verificationToken: String,
@@ -50,5 +46,14 @@ const userSchema = new mongoose.Schema(
 	},
 	{ timestamps: true }
 );
+
+// Mongoose Pre-Save Middleware for Updating Last Login
+userSchema.pre("save", function (next) {
+	// Only update lastLogin when the document is being modified (e.g., user logs in)
+	if (this.isModified("email") || this.isModified("password")) {
+		this.lastLogin = Date.now(); // Update lastLogin only when user details change
+	}
+	next();
+});
 
 export const User = mongoose.model("User", userSchema);

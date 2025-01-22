@@ -121,49 +121,58 @@ export const verifyEmail = async (req, res) => {
 
   
 
-export const login= async(req,res)=>{
-  const {email,password}=req.body;
+
+
+export const login = async (req, res) => {
+  const { email, password } = req.body;
+
   try {
-    const user=await User.findOne({email});
-    if(!user){
+    const user = await User.findOne({ email });
+    if (!user) {
       return res.status(400).json({
-        success:false,
-        message:"user not found"
-      })
-    };
-    const isPasswordValid= await bcryptjs.compare(password,user.password);
-    if(!isPasswordValid){
-      return res.status(400).json({
-        success:false,
-        message:"invalid credentials"
-      })
+        success: false,
+        message: "User not found",
+      });
     }
-    generateTokenandSetCookies(res,user._id);
 
-    user.lastlogin=new Date();
-    await user.save()
+    // Compare password with the hash stored in the database
+    const isPasswordValid = await bcryptjs.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid credentials",
+      });
+    }
 
-    res.status(201).json({
+    // Generate token and set it in cookies
+    generateTokenandSetCookies(res, user._id);
+
+    // Update lastLogin to current time
+    user.lastLogin = new Date(); // Ensure camelCase matches the schema
+    await user.save();
+
+    // Return the user data excluding the password
+    res.status(200).json({
       success: true,
       message: "User logged in successfully",
       user: {
         ...user._doc,
         password: undefined, // Do not return the password in the response
-      }
+      },
     });
 
-
   } catch (error) {
-    // Log the error to the terminal for debugging
-    console.error("Error during signup:", error);
+    // Log the error for debugging
+    console.error("Error during login:", error);
 
     // Send a generic error response to the client
     res.status(500).json({
       success: false,
-      message: "Internal server error. Please try again later."
+      message: "Internal server error. Please try again later.",
     });
   }
-  }
+};
+
 
 
 
