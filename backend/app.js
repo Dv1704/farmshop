@@ -28,11 +28,7 @@ app.use(cookieParser()); // Parse incoming cookies
 app.use(express.json({ limit: "50mb" })); // Increase limit to 50MB
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
-// Test Route
-app.get("/", (req, res) => {
-    res.send("Hello world");
-    console.log("Hello world");
-});
+
 
 // Auth routes
 app.use("/api/auth", authRoutes);
