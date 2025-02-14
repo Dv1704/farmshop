@@ -12,6 +12,8 @@ import { useUserStore } from "./stores/useUserStore";
 import LoadingSpinner from "./components/LoadingSpinner";
 import DashboardPage from "./pages/DashboardPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import CategoryPage from "./pages/CategoryPage";
+import { useCartStore } from "./stores/useCartStore";
 
 // Protect routes that require authentication
 const ProtectedRoute = ({ children }) => {
@@ -47,11 +49,21 @@ function App() {
   const location = useLocation();
   const isHomepage = location.pathname === "/";
   const { user, checkAuth, checkingAuth } = useUserStore();
+  const { getCartItems } = useCartStore();
   const navigate = useNavigate();
 
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
+
+
+	useEffect(() => {
+		if (!user) return;
+
+		getCartItems();
+	}, [getCartItems, user]);
+
+
 
   useEffect(() => {
     // This will ensure if the user is authenticated and the 'redirect' query is present,
@@ -124,10 +136,15 @@ function App() {
         
 
           <Route path="/verify-email" element={<EmailVerificationPage />} />
+
+
           <Route
             path="/shop"
             element={<ShopPage />} // No need to protect this route
           />
+
+
+          <Route path='/category/:category' element={<CategoryPage />} />
 
 
 <Route
@@ -155,6 +172,9 @@ function App() {
             }
           />
         </Routes>
+
+   
+        
       </div>
 
       <Toaster />

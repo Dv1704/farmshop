@@ -1,15 +1,15 @@
 import { motion } from "framer-motion";
 import { useUserStore } from "../stores/useUserStore";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import AnalyticsTab from "../components/AnalyticsTab";
+import CreateProductTab from "../components/CreateProductTab";
+import ProductsTab from "../components/ProductsList";
 
 const DashboardPage = () => {
-  const { user, logout } = useUserStore();
+  const { user } = useUserStore();
   const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
+  const [activeTab, setActiveTab] = useState("profile");
 
   const formatDate = (dateString) => {
     try {
@@ -30,116 +30,105 @@ const DashboardPage = () => {
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
       transition={{ duration: 0.5 }}
-      className="max-w-md w-full mx-auto mt-10 p-8 bg-gray-900 bg-opacity-80 backdrop-filter backdrop-blur-lg rounded-xl shadow-2xl border border-gray-800"
+      className="w-full min-h-screen mx-auto p-8 bg-gradient-to-br from-green-100 to-green-200 text-gray-800 rounded-xl shadow-2xl border border-green-300"
     >
-      <h2 className="text-3xl font-bold mb-6 text-center bg-gradient-to-r from-green-400 to-emerald-600 text-transparent bg-clip-text">
+      <h2 className="text-3xl font-bold mb-6 text-center bg-gradient-to-r from-green-600 to-green-500 text-transparent bg-clip-text">
         Welcome to Your Dashboard
       </h2>
 
-      {/* Display General User Information */}
-      <div className="space-y-6">
-        <motion.div
-          className="p-4 bg-gray-800 bg-opacity-50 rounded-lg border border-gray-700"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+      {/* Tabs */}
+      <div className="flex space-x-4 mb-4 justify-center">
+        <button
+          className={`px-4 py-2 rounded-lg text-white ${
+            activeTab === "profile"
+              ? "bg-gradient-to-r from-yellow-400 to-green-500"
+              : "bg-green-600 opacity-70 hover:bg-green-500"
+          }`}
+          onClick={() => setActiveTab("profile")}
         >
-          <h3 className="text-xl font-semibold text-green-400 mb-3">
-            Profile Information
-          </h3>
-          <p className="text-gray-300">Name: {user.name}</p>
-          <p className="text-gray-300">Email: {user.email}</p>
-          <p className="text-gray-300">
-            Role:{" "}
-            <span
-              className={`font-bold ${
-                user.role === "seller" ? "text-yellow-400" : "text-blue-400"
+          Profile
+        </button>
+        {user.role === "seller" && (
+          <>
+            <button
+              className={`px-4 py-2 rounded-lg text-white ${
+                activeTab === "createProduct"
+                  ? "bg-gradient-to-r from-yellow-400 to-green-500"
+                  : "bg-green-600 opacity-70 hover:bg-green-500"
               }`}
+              onClick={() => setActiveTab("createProduct")}
             >
-              {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-            </span>
-          </p>
-        </motion.div>
+              Create Product
+            </button>
+            <button
+              className={`px-4 py-2 rounded-lg text-white ${
+                activeTab === "products"
+                  ? "bg-gradient-to-r from-yellow-400 to-green-500"
+                  : "bg-green-600 opacity-70 hover:bg-green-500"
+              }`}
+              onClick={() => setActiveTab("products")}
+            >
+              Products
+            </button>
+            <button
+              className={`px-4 py-2 rounded-lg text-white ${
+                activeTab === "analytics"
+                  ? "bg-gradient-to-r from-yellow-400 to-green-500"
+                  : "bg-green-600 opacity-70 hover:bg-green-500"
+              }`}
+              onClick={() => setActiveTab("analytics")}
+            >
+              Analytics
+            </button>
+          </>
+        )}
+      </div>
 
-        {/* Show Analytics for Sellers */}
-        {user.role === "seller" ? (
+      {/* Tab Content */}
+      <motion.div
+        className="space-y-6"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+      >
+        {/* Profile Tab Content */}
+        {activeTab === "profile" && (
           <motion.div
-            className="p-4 bg-gray-800 bg-opacity-50 rounded-lg border border-gray-700"
+            className="p-4 bg-green-50 bg-opacity-80 rounded-lg border border-green-200"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <h3 className="text-xl font-semibold text-green-400 mb-3">
-              Seller Analytics
+            <h3 className="text-xl font-semibold text-green-700 mb-3">
+              Profile Information
             </h3>
-            <p className="text-gray-300">
-              Visit the{" "}
+            <p className="text-gray-700">Name: {user.name}</p>
+            <p className="text-gray-700">Email: {user.email}</p>
+            <p className="text-gray-700">
+              Role:{" "}
               <span
-                className="text-green-500 cursor-pointer underline"
-                onClick={() => navigate("/analytics")}
+                className={`font-bold ${
+                  user.role === "seller" ? "text-green-600" : "text-green-700"
+                }`}
               >
-                Analytics Page
-              </span>{" "}
-              to track your sales and performance.
-            </p>
-          </motion.div>
-        ) : (
-          // Projected Content for Customers
-          <motion.div
-            className="p-4 bg-gray-800 bg-opacity-50 rounded-lg border border-gray-700"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            <h3 className="text-xl font-semibold text-green-400 mb-3">
-              My Cart
-            </h3>
-            <p className="text-gray-300">
-              You have {user.cartItems?.length || 0} items in your cart.{" "}
-              <span
-                className="text-green-500 cursor-pointer underline"
-                onClick={() => navigate("/cart")}
-              >
-                View Cart
+                {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
               </span>
+            </p>
+            <p className="text-gray-700">
+              <span className="font-bold">Joined: </span>
+              {formatDate(user.createdAt)}
             </p>
           </motion.div>
         )}
 
-        {/* Account Activity */}
-        <motion.div
-          className="p-4 bg-gray-800 bg-opacity-50 rounded-lg border border-gray-700"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-        >
-          <h3 className="text-xl font-semibold text-green-400 mb-3">
-            Account Activity
-          </h3>
-          <p className="text-gray-300">
-            <span className="font-bold">Joined: </span>
-            {formatDate(user.createdAt)} {/* Shows user createdAt */}
-          </p>
-        </motion.div>
-      </div>
-
-      {/* Logout Button */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8 }}
-        className="mt-4"
-      >
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={handleLogout}
-          className="w-full sm:w-auto sm:px-6 px-4 py-2 sm:py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white 
-						font-bold rounded-lg shadow-lg hover:from-green-600 hover:to-emerald-700
-						focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-900"
-        >
-          Logout
-        </motion.button>
+        {/* Seller Tab Content */}
+        {user.role === "seller" && (
+          <>
+            {activeTab === "createProduct" && <CreateProductTab />}
+            {activeTab === "products" && <ProductsTab />}
+            {activeTab === "analytics" && <AnalyticsTab />}
+          </>
+        )}
       </motion.div>
     </motion.div>
   );
